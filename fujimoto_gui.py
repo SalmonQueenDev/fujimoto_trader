@@ -85,6 +85,7 @@ PARAMS = {
 }
 MIN_BARS = 120  # 판단에 필요한 최소 거래일 수
 BACKTEST_DAYS = 1825  # 종목 분석 탭은 과거 손익 계산을 위해 5년치 일봉을 받음 (검색 탭은 2년)
+SHOW_STATS_TAB = False  # True 로 바꾸면 '신호 성적표' 탭이 나타남 — 매수 규칙을 바꿨을 때 효과를 검증할 때 사용
 
 SCAN = {
     "recent_days": 3,        # 최근 며칠(거래일) 안에 나온 매수 신호까지 포함
@@ -923,7 +924,7 @@ class App(tk.Tk):
         ttk.Checkbutton(fbar, text="시장보다 15%p 이상 더 빠진 종목 제외", variable=self.f_rel,
                         command=self._apply_filters).pack(side="left", padx=6)
         ttk.Label(fbar, foreground="#666", text=(
-            "— 신호 성적표에서 효과가 확인된 조건 · 바꾸면 분석·검색·계산을 다시 실행하세요")).pack(side="left", padx=6)
+            "— 과거 5년 검증에서 효과가 확인된 조건 · 바꾸면 분석·검색을 다시 실행하세요")).pack(side="left", padx=6)
 
         self.nb = ttk.Notebook(self)
         self.nb.pack(fill="both", expand=True)
@@ -931,11 +932,12 @@ class App(tk.Tk):
         self.tab_scan = ttk.Frame(self.nb)
         self.nb.add(self.tab_analyze, text="  종목 분석  ")
         self.nb.add(self.tab_scan, text="  종목 검색  ")
-        self.tab_stats = ttk.Frame(self.nb)
-        self.nb.add(self.tab_stats, text="  신호 성적표  ")
         self._build_analyze(self.tab_analyze)
         self._build_scan(self.tab_scan)
-        self._build_stats(self.tab_stats)
+        if SHOW_STATS_TAB:
+            self.tab_stats = ttk.Frame(self.nb)
+            self.nb.add(self.tab_stats, text="  신호 성적표  ")
+            self._build_stats(self.tab_stats)
 
     def _apply_filters(self):
         mkt, rel = ENTRY_COMBOS[-1][1]
